@@ -1,0 +1,75 @@
+<!doctype html>
+<?php 
+error_reporting(E_ALL);
+ini_set("display_errors", 1);
+?>
+<html>
+<head>
+<link href="style.css" rel="stylesheet">
+<title>This is my first PHP program!</title>
+</head>
+<body>
+<div>
+<?php 
+//phpinfo();
+
+// $db1 = mysqli_connect("localhost","justinc",'-dvdra-018',"library"); 
+// if(is_null($db1)){
+// 	echo "null";
+// }
+
+$db = new PDO("mysql:host=localhost;dbname=library", "justinc", '-dvdra-018');
+
+$statement = $db->prepare( "SELECT * FROM books b, authors a WHERE a.authorid=b.authorid ORDER BY name DESC");
+$statement->execute();
+// gets rows one at a time
+$row = $statement->fetch();
+$keys = array_keys($row);
+echo "<table Rules='all' style='border:1px solid black'> <tr>";
+
+foreach($keys as $key){
+	if(!is_int($key))
+	echo "<th>{$key}</th>";
+}
+echo "</tr><tr>";
+
+foreach($row as $key =>$item){
+	if(!is_int($key)){
+		if($key == "title"){
+			echo "<td class='title'>{$item}</td>";
+		}else{
+
+	echo "<td>{$item}</td>";
+}
+}
+}
+echo "</tr>";
+
+while ($row = $statement->fetch()) {
+
+echo "<tr>";
+foreach($row as $key =>$item){
+	if(!is_int($key)){
+		if($key == "title"){
+			echo "<td class='title'>{$item}</td>";
+		}else{
+
+	echo "<td>{$item}</td>";
+}
+}
+}
+echo "</tr>";
+// or do something more meaningful with each returned row
+}
+echo "</table>";
+
+//if(is_null($db)){
+//	echo "null2";
+//};
+
+
+?>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,131 @@
+<!doctype html>
+<?php 
+//error_reporting(E_ALL);
+//ini_set("display_errors", 1);
+?>
+<html>
+<head>
+<link href="style.css" rel="stylesheet">
+<title>This is my first PHP program!</title>
+</head>
+<body>
+<div>
+<?php 
+//phpinfo();
+ include 'dataBase.php';
+//$data = array("1", "2", "[3, 4]");
+//echo implode(", ", $data);
+// $db1 = mysqli_connect("localhost","justinc",'-dvdra-018',"library"); 
+// if(is_null($db1)){
+// 	echo "null";
+// }
+
+
+ ////////////////////////////////////////
+$filename = 'test2.json';
+$file_handle = fopen($filename, "a+");
+$jsonData = fread($file_handle, filesize($filename));
+$jsonDecoded = json_decode($jsonData);
+//print_r($jsonDecoded->firmwareRev);
+
+//$db = new mysqli("localhost", "justinc", '-dvdra-018', "skookumElements");
+$db2 = new DatabaseConnect("library");
+
+$db2->getName();
+$password = "-dvdra-018";
+$db2->connect("justinc", $password);
+$tableName = "testTable1";
+$colArray = array("ID", "firstName", "lastName");
+$typeArray = array("INTEGER PRIMARY KEY", "TEXT", "TEXT");
+$data = array(1, "Justin", "Clapperton");
+//$db2->createTable($tableName, $colArray, $typeArray);
+echo "<br/>";
+//$db2->addToTable($tableName, $data, $colArray);
+echo "<br/>";
+//$db2->displayTable("*", $tableName);
+echo "<br/>";
+//$db2->deleteFromTable($tableName, "DELETE_TABLE", 2);
+echo "<br/>";
+//$db2->displayTable("*", $tableName);
+echo "<br/>";
+$jsonTableName = "skookumData";
+$jsonArrayType = array("INTEGER PRIMARY KEY",
+					   "TEXT", 
+					   "TEXT", 
+					   "TEXT", 
+					   "TEXT", 
+					   "BLOB", 
+					   "INTEGER", 
+					   "INTEGER", 
+					   "TEXT", 
+					   "TEXT", 
+					   "TEXT", 
+					   "TEXT", 
+					   "TEXT");
+
+
+
+//$j = 0;
+//$db2->addToTable($jsonTableName, $row, $colArray);
+$jsonObject = $jsonDecoded;
+$keys = get_object_vars($jsonDecoded);
+$arrayKeys = array_keys($keys);
+$jsonElement = get_object_vars($jsonObject->$arrayKeys[0]);
+$elementKeys = array_keys($jsonElement);
+array_unshift($elementKeys, "id_index");
+print_r($elementKeys);
+echo "<table Rules='all' style='border:1px solid black'>";
+
+
+$i=1;
+
+foreach($jsonObject as $row){
+	$row = get_object_vars($row);
+	array_unshift($row, "");
+	//print_r($row);
+
+	echo "<tr><th>INDEX</th><th>MENU</td>";
+		$db2->createTable($jsonTableName, $elementKeys, $jsonArrayType);
+	foreach($elementKeys as $key){
+		$key = strtoupper($key);
+
+		echo "<th>{$key}</th>";
+	}
+	echo "</tr>";
+	$db2->addToTable($jsonTableName, $row, $elementKeys);
+	sleep(0.1);
+	//echo ++$j;
+	//$row = get_object_vars($row);
+
+	echo "<tr>";
+	$rowMenu = strtoupper($row->menu);
+	echo "<td> $i </td><td class='rowHeader'> $rowMenu </td>";
+	foreach($row as $item){
+
+		if($item == NULL){
+			$item = "null";
+		}
+
+		if(!is_array($item)){
+			$item = str_pad($item, 100, " ");
+			echo "<td>{$item}</td>";
+		}else{
+			echo "<td>[";
+			foreach($item as $items){
+				echo "{$items}, ";
+			}
+			echo "]</td>";
+		}
+	}
+echo "</tr>";
+$i++;
+}
+echo "</table>";
+//////////////////////////////////////////////////
+
+
+?>
+</div>
+
+</body>
+</html>
